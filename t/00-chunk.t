@@ -8,7 +8,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 11;
+use Test::More tests => 14;
 BEGIN { use_ok('MPGA') };
 
 #########################
@@ -17,32 +17,42 @@ BEGIN { use_ok('MPGA') };
 # its man page ( perldoc Test::More ) for help writing this test script.
 
 
-is_deeply( [ chunk() ], [undef, undef, undef], 'test chunk()' );
+is_deeply( [ chunk() ], [], 'test chunk()' );
 
 my $reverse_flow = undef;
-is_deeply( [ chunk( $reverse_flow ) ], [undef, undef, undef], 'test chunk( undef )' );
+is_deeply( [ chunk( $reverse_flow ) ], [], 'test chunk( undef )' );
 
 $reverse_flow = 'aaa';
-is_deeply( [ chunk( $reverse_flow ) ], [undef, undef, undef], 'test chunk( scalar )' );
+is_deeply( [ chunk( $reverse_flow ) ], [], 'test chunk( scalar )' );
 
 my @reverse_flow = ( 1, 2, 'aaa' );
-is_deeply( [ chunk( @reverse_flow ) ], [undef, undef, undef], 'test chunk( array )' );
+is_deeply( [ chunk( @reverse_flow ) ], [], 'test chunk( array )' );
+
+my %reverse_flow = ( 1 => 2, 'aaa' => 'bbb' );
+is_deeply( [ chunk( %reverse_flow ) ], [], 'test chunk( hash )' );
+
+$reverse_flow = { 1 => 2, 'aaa' => 'bbb' };
+is_deeply( [ chunk( $reverse_flow ) ], [], 'test chunk( \hash )' );
 
 $reverse_flow = [];
 is_deeply( [ chunk( $reverse_flow ) ], [undef, undef, undef], 'test chunk( [] )' );
 
-$reverse_flow = [1];
+$reverse_flow = [ 1 ];
 is_deeply( [ chunk( $reverse_flow ) ], [undef, [1], 1], 'test chunk( [scalar] )' );
 
-$reverse_flow = [3, 2, 1];
+$reverse_flow = [ 3, 2, 1 ];
 is_deeply( [ chunk( $reverse_flow ) ], [undef, [1, 2, 3], 1], 'test chunk( [scalar, scalar, scalar] )' );
 
-$reverse_flow = [1, \&fun1];
+$reverse_flow = [ 1, \&fun1 ];
 is_deeply( [ chunk( $reverse_flow ) ] , [\&fun1, undef, undef], 'test chunk( [scalar, fun] )' );
 is_deeply( $reverse_flow , [ 1 ] , 'test flow after chunk( [scalar, fun] )' );
 
-$reverse_flow = [\&fun1, 1];
-is_deeply( [ chunk( $reverse_flow ) ], [\&fun1, [1], 1], 'test chunk( [fun, scalar] )' );
+$reverse_flow = [ \&fun1, 3, 2, 1 ];
+is_deeply( [ chunk( $reverse_flow ) ], [\&fun1, [1, 2, 3], 1], 'test chunk( [fun, @scalar] )' );
+
+$reverse_flow = [ \&fun1, 5, 4, \&fun1, 3, 2, 1 ];
+chunk( $reverse_flow );
+is_deeply( $reverse_flow , [ \&fun1, 5, 4 ] , 'test flow after chunk( [fun, @scalar] )' );
 
 
 
@@ -56,11 +66,3 @@ sub fun1 {
   return 'ccc';
 }
 
-#my $arr_rev;
-#@$arr_rev = reverse @$arr;
-#is( chunk( $arr_rev ), (\&fun1, [1], 1), 'test chunk()' );
-
-
-#$arr = [ \&fun1 ];
-#@$arr_rev = reverse @$arr;
-#is( chunk( $arr_rev ), (\&fun1, [1], 1), 'test chunk()' );
