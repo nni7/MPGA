@@ -35,20 +35,20 @@ $reverse_flow = { 1 => 2, 'aaa' => 'bbb' };
 is_deeply( [ chunk( $reverse_flow ) ], [], 'test chunk( \hash )' );
 
 $reverse_flow = [];
-is_deeply( [ chunk( $reverse_flow ) ], [undef, undef, undef], 'test chunk( [] )' );
+is_deeply( [ chunk( $reverse_flow ) ], [undef, undef], 'test chunk( [] )' );
 
 $reverse_flow = [ 1 ];
-is_deeply( [ chunk( $reverse_flow ) ], [undef, [1], 1], 'test chunk( [scalar] )' );
+is_deeply( [ chunk( $reverse_flow ) ], [undef, [1]], 'test chunk( [scalar] )' );
 
 $reverse_flow = [ 3, 2, 1 ];
-is_deeply( [ chunk( $reverse_flow ) ], [undef, [1, 2, 3], 1], 'test chunk( [scalar, scalar, scalar] )' );
+is_deeply( [ chunk( $reverse_flow ) ], [undef, [1, 2, 3]], 'test chunk( [scalar, scalar, scalar] )' );
 
 $reverse_flow = [ 1, \&fun1 ];
-is_deeply( [ chunk( $reverse_flow ) ] , [\&fun1, undef, undef], 'test chunk( [scalar, fun] )' );
+is_deeply( [ chunk( $reverse_flow ) ] , [\&fun1, undef], 'test chunk( [scalar, fun] )' );
 is_deeply( $reverse_flow , [ 1 ] , 'test flow after chunk( [scalar, fun] )' );
 
 $reverse_flow = [ \&fun1, 3, 2, 1 ];
-is_deeply( [ chunk( $reverse_flow ) ], [\&fun1, [1, 2, 3], 1], 'test chunk( [fun, @scalar] )' );
+is_deeply( [ chunk( $reverse_flow ) ], [\&fun1, [1, 2, 3]], 'test chunk( [fun, @scalar] )' );
 
 $reverse_flow = [ \&fun1, 5, 4, \&fun1, 3, 2, 1 ];
 chunk( $reverse_flow );
