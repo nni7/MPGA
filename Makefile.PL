@@ -8,7 +8,7 @@ WriteMakefile(
                    'Test::More' => 0,
     }, # e.g., Module::Name => 1.1
     ABSTRACT_FROM     => 'lib/MPGA.pm', # retrieve abstract from module
-    AUTHOR            => 'NN<nn@ikfia.ysn.ru>',
+    AUTHOR            => 'NN<autumNN@yandex.ru>',
     #LICENSE           => 'perl',
     #Value must be from legacy list of licenses here
     #https://metacpan.org/pod/Module::Build::API
