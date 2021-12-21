@@ -8,8 +8,6 @@
 use strict;
 use warnings;
 
-use Data::Dumper;
-
 use Test::More tests => 21;
 BEGIN { use_ok('MPGA') };
 

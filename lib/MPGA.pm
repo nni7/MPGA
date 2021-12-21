@@ -24,9 +24,7 @@ our @EXPORT = qw(
   flow step chunk
 );
 
-our $VERSION = '0.01';
-
-use Data::Dumper;
+our $VERSION = '0.02';
 
 
 # функция flow() принимает только ссылку на массив,

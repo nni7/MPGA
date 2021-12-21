@@ -61,8 +61,6 @@ sub fun1 {
   my ( $self, $args, $flow ) = @_;
   #my $obj = shift @$args;
 
-  print "fun1: ", Dumper( $args );
-
   return 'ccc';
 }
 
