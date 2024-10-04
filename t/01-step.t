@@ -48,51 +48,51 @@ is_deeply( $reverse_flow, [], 'test step( \array )' );
 
 $reverse_flow = [ \&fun_return, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, [], 'test step( fun_return, args )' );
+is_deeply( $reverse_flow, [3, 2, 1], 'test step( fun_return, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_return, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa'], 'test step( fun_return, args )' );
+is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 3, 2, 1], 'test step( fun_return, args )' );
 
 $reverse_flow = [ \&fun_return_undef, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, [], 'test step( fun_return_undef, args )' );
+is_deeply( $reverse_flow, [3, 2, 1], 'test step( fun_return_undef, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_return_undef, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa'], 'test step( fun_return_undef, args )' );
+is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 3, 2, 1], 'test step( fun_return_undef, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_return_scalar, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 'xxx'], 'test step( fun_return_scalar, args )' );
+is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 'xxx', 3, 2, 1], 'test step( fun_return_scalar, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_return_scalar_ref, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa'], 'test step( fun_return_scalar_ref, args )' );
+is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', \'xxx', 3, 2, 1], 'test step( fun_return_scalar_ref, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_return_hash, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 1], 'test step( fun_return_hash, args )' );
+is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 1, 3, 2, 1], 'test step( fun_return_hash, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_return_hash_ref, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', { 'xxx' => 'yyy' }], 'test step( fun_return_hash_ref, args )' );
+is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', { 'xxx' => 'yyy' }, 3, 2, 1], 'test step( fun_return_hash_ref, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_return_array, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 3], 'test step( fun_return_array, args )' );
+is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 3, 3, 2, 1], 'test step( fun_return_array, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_return_array_ref, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 'zzz', 'yyy', 'xxx'], 'test step( fun_return_array_ref, args )' );
+is_deeply( $reverse_flow, ['ccc', 'bbb', 'aaa', 'zzz', 'yyy', 'xxx', 3, 2, 1], 'test step( fun_return_array_ref, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_modifying_flow, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, ['xxx', 'yyy', 'zzz'], 'test step( fun_modifying_flow, args )' );
+is_deeply( $reverse_flow, ['xxx', 'yyy', 'zzz', 3, 2, 1], 'test step( fun_modifying_flow, args )' );
 
 $reverse_flow = [ 'ccc', 'bbb', 'aaa', \&fun_clear_flow, 3, 2, 1 ];
 step( $reverse_flow );
-is_deeply( $reverse_flow, [], 'test step( fun_clear_flow, args )' );
+is_deeply( $reverse_flow, [3, 2, 1], 'test step( fun_clear_flow, args )' );
 
 
 
