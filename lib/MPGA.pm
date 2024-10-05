@@ -24,7 +24,7 @@ our @EXPORT = qw(
   flow step chunk
 );
 
-our $VERSION = '0.05';
+our $VERSION = '0.08';
 
 
 # функция flow() принимает только ссылку на массив,
@@ -170,45 +170,55 @@ __END__
 
 =head1 NAME
 
-MPGA - Perl extension for blah blah blah
+MPGA - Make Perl Great Again - a module that makes it easy 
+to write programs in the PERL programming language.
 
 =head1 SYNOPSIS
 
   use MPGA;
-  blah blah blah
+
+  flow( [ "aaa", \&fun ] );
+
+  sub fun {
+    my ($self, $args, $flow) = @_;
+    my ($par) = @$args;
+
+    print "fun() infinite loop\n";
+    print "par: [$par]\n";
+    return [$self];
+  }
 
 =head1 DESCRIPTION
 
-Stub documentation for MPGA, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
+Something like "Flow driven development".
 
-Blah blah blah.
+Flow is a reference to an array of arguments and functions, which.
+are sequentially processed by the functions of this module.
 
-=head2 EXPORT
+With this module you can program something like this:
 
-None by default.
+flow( [
+  $args, ... $args, \&fun1,
+  $another, ..., $args, \&fun2,
+  $more, ..., $args, \&fun3
+] );
 
-
+A prerequisite is that the functions in the flow must satisfy a few.
+simple conditions:
+ - take three arguments - ($self, $args, $flow)
+ - return a reference to an array - [ @flow_chunk ]
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
+https://github.com/nni7/MPGA
 
 =head1 AUTHOR
 
-U-DESKTOP-MJUPRTK\nn, E<lt>nn@nonetE<gt>
+NN - Nikolay Neustroev
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2021 by U-DESKTOP-MJUPRTK\nn
+Copyright (C) 1997-2024 by NN
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.32.1 or,
