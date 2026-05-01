@@ -3,4 +3,7 @@ MPGA for C++
 
 clang++ -std=c++23 7.cpp
 
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2026 by Nikolay Neustroev (NN).
 
