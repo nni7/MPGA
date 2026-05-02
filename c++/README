@@ -1,7 +1,30 @@
 MPGA for C++
 =================
 
+MPGA - Make Perl great again - Flow-driven development library for C++
+
+
+USAGE
+
+#include "mpga.hpp"
+#include <iostream>
+#include <string>
+
+auto step1 = [](int a, int b) {
+    return a + b;
+};
+
+auto step2 = [](int result, std::string prefix) {
+    std::cout << "  " << prefix << ": " << result << "\n";
+};
+
+flow(10, 20, step1, std::string("Result is"), step2);
+
+
+COMPILATION
+
 clang++ -std=c++23 7.cpp
+
 
 COPYRIGHT AND LICENCE
 
