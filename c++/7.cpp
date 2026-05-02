@@ -32,5 +32,19 @@ int main() {
     // flow("Hello", [](int a){}); 
     */
 
+flow(
+    10,
+    [](int x) {
+        // Возвращаем кортеж. Он РАСПАКУЕТСЯ в начало потока.
+        return std::make_tuple(
+            x * 2, 
+            [](int res) { std::cout << "Result: " << res << "\n"; }
+        );
+    },
+    []() { std::cout << "This runs AFTER the unpacked tuple.\n"; }
+);
+
+
+
     return 0;
 }
