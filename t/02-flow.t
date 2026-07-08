@@ -50,7 +50,7 @@ my $arg = [];
 $flow = [ $arg, \&fun1, 3, 2, 1 ];
 flow( $flow );
 is_deeply( $flow, [], 'test flow( fun_return, args )' );
-is_deeply( $arg, ['fun1', 1, 2, 3], 'test flow( fun1, args )' );
+is_deeply( $arg, ['fun1', 3, 2, 1], 'test flow( fun1, args )' );
 
 $arg = {};
 $flow = [ $arg, \&fun2, \&fun3 ];
