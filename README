@@ -21,9 +21,16 @@ flow( [
 
 A prerequisite is that the functions in the flow must satisfy a few 
 simple conditions:
- - take three arguments - ($self, $args, $flow)
+ - take four arguments - ($self, $args, $flow, $ctx)
  - return a reference to an array - [ @flow_chunk ]
+ - define an attribute specifying the number of required arguments
 
+sub fun1 : MPGA::argsNum(1) {
+  my ($self, $args, $flow, $ctx) = @_;
+  my $args1 = shift @$args;
+  .....
+   return ["arg4", \&fun4];
+}
 
 
 INSTALLATION
