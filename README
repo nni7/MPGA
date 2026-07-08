@@ -25,7 +25,7 @@ simple conditions:
  - return a reference to an array - [ @flow_chunk ]
  - define an attribute specifying the number of required arguments
 
-sub fun1 : MPGA::argsNum(1) {
+sub fun1 : MPGAargsNum(1) {
   my ($self, $args, $flow, $ctx) = @_;
   my $args1 = shift @$args;
   .....

@@ -40,12 +40,12 @@ our $VERSION = '0.21';
 our %REGISTRY;
 
 
-# Определение атрибута :argsNum
+# Определение атрибута :MPGAargsNum
 # этот атрибут необходим функциям, чтобы указать MPGA сколько аргументов обязательно 
 # нужно исполняемой функции, это для удобства работы в новом стиле. основываясь на
 # это атрибуте step() предоставит функции именно такой длины массив аргументов @$args.
 # исполняемая функция должна иметь примерно такой вид:
-# sub fun : MPGA::argsNum(3) {
+# sub fun : MPGAargsNum(3) {
 #   my ($self, $args, $flow, $ctx) = @_;
 #   my $args1 = shift @$args;
 #   my $args2 = shift @$args;
@@ -64,7 +64,7 @@ our %REGISTRY;
 #   return;
 # }
 # значит функция написана в старом стиле и она сама управляет @$args и контекстом.
-sub argsNum : ATTR(CODE) {
+sub UNIVERSAL::MPGAargsNum : ATTR(CODE) {
   my ($package, $symbol, $referent, $attr, $argsNum) = @_;
 
   # Если данные пришли в виде массива, берем первый элемент.
@@ -133,7 +133,7 @@ sub flow {
 # }
 #   - $fun - сама эта функция
 #   - вторым аргументом идет ссылка на массив аргументов:
-#       * если у функции задан атрибут :argsNum(N) — это ссылка на массив из N
+#       * если у функции задан атрибут :MPGAargsNum(N) — это ссылка на массив из N
 #         ближайших к функции аргументов, которые забрали с конца массива
 #         накопленных аргументов
 #       * если атрибут не задан — это ссылка на весь массив накопленных аргументов
@@ -146,8 +146,8 @@ sub flow {
 #     рекурсивно возвратить саму себя в поток @$flow
 #   - второй аргумент - массив аргументов @$args - аргументы могут относиться к этой функции или
 #     к другой, которая идет дальше по потоку, это зависит от того определен ли у функции
-#     атрибут argsNum:
-#       - если определен, то в @$args именно argsNum аргументов, и их можно обрабатывать самым
+#     атрибут MPGAargsNum:
+#       - если определен, то в @$args именно MPGAargsNum аргументов, и их можно обрабатывать самым
 #         обычным способом через shift.
 #       - если не определен, то в @$args возможно не все аргументы относятся к этой функции
 #         и обрабатывать их надо осторожно, чтобы не удалить из потока транзитные аргументы.
@@ -196,7 +196,7 @@ sub step {
     if ($fun) {
       my $res;
 
-      # Если у функции объявлен атрибут :argsNum
+      # Если у функции объявлен атрибут :MPGAargsNum
       if ( exists $REGISTRY{$fun} ) {
         my $argsNum = $REGISTRY{$fun};
 
@@ -283,7 +283,7 @@ to write programs in the PERL programming language.
 
   # --- Вариант 1: Классический flow без общего контекста ---
 
-  sub fun : MPGA::argsNum(2) {
+  sub fun : MPGAargsNum(2) {
     my ($self, $args, $flow) = @_;
     my ($a, $b) = @$args;
     print "Got arguments: $a and $b\n";
@@ -294,7 +294,7 @@ to write programs in the PERL programming language.
 
   # --- Вариант 2: Использование flow_ctx с общим контекстом ---
 
-  sub step_one : MPGA::argsNum(2) {
+  sub step_one : MPGAargsNum(2) {
     my ($self, $args, $flow, $ctx) = @_;
     my ($a, $b) = @$args;
     
@@ -303,7 +303,7 @@ to write programs in the PERL programming language.
     return;
   }
 
-  sub step_two : MPGA::argsNum(0) {
+  sub step_two : MPGAargsNum(0) {
     my ($self, $args, $flow, $ctx) = @_;
     
     # Читаем данные из контекста на следующем шаге
@@ -339,263 +339,6 @@ flow_ctx( [
   $ctx_hash_ref,
   $args, ..., \&fun1,
   $args, ..., \&fun2
-] );
-
-=head1 SEE ALSO
-
-https://github.com/nni7/MPGA
-
-=head1 AUTHOR
-
-NN - Nikolay Neustroev
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 1997-2026 by NN
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.32.1 or,
-at your option, any later version of Perl 5 you may have available.
-
-=cut
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-package MPGA;
-
-use strict;
-use warnings;
-use Attribute::Handlers; # Добавлено для поддержки атрибутов
-
-require Exporter;
-
-our @ISA = qw(Exporter);
-
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration use MPGA ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
- 
-) ] );
-
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw(
-  flow step chunk
-);
-
-our $VERSION = '0.08';
-
-# Реестр для хранения количества аргументов функций
-our %REGISTRY;
-
-# Определение атрибута :argsNum
-sub argsNum : ATTR(CODE) {
-  my ($package, $symbol, $referent, $attr, $arity) = @_;
-  $REGISTRY{$referent} = $arity;
-}
-
-# функция flow() принимает только ссылку на массив,
-# массив разбирается слева направо функцией step()
-# пока не опустошится
-#
-sub flow {
-  my $flow = shift;
-
-  return if !$flow;
-  return if ref( $flow ) ne 'ARRAY';
-
-  while(scalar @$flow) {
-    step( $flow );
-  }
-
-  return;
-}
-
-
-# функция step() принимает только ссылку на массив,
-# массив парсится слева направо с помощью вызова функции chunk()
-# в поисках первой ссылки на функцию.
-# эта функция заносится в переменную $fun и будет исполняться, а все переменные
-# найденные до этой функции заносятся в массив @$args. таким образом
-# $flow становится короче.
-#
-# step() принимает поток в прямом порядке
-#
-# исполняемая функция $fun ВСЕГДА принимает три аргумента:
-#   - $fun - сама эта функция
-#   - вторым аргументом идет ссылка на массив аргументов:
-#       * если у функции задан атрибут :argsNum(N) — это ссылка на массив из N
-#         ближайших к функции аргументов
-#       * если атрибут не задан — это ссылка на весь массив накопленных аргументов
-#   - $flow - остаток потока
-#
-sub step {
-  my $flow = shift;
-
-  return if !$flow;
-  return if ref($flow) ne 'ARRAY';
-
-  if(scalar @$flow) {
-    my ($fun, $args) = chunk($flow);
-    if ($fun) {
-      my $res;
-      
-      # Если у функции объявлен атрибут :argsNum
-      if ( exists $REGISTRY{$fun} ) {
-        my $argsNum = $REGISTRY{$fun};
-        
-        # Откусываем нужное число аргументов с конца массива $args (они ближе всего к функции)
-        # splice физически удаляет их из $args, оставляя там только транзитные элементы
-        my @pass_args = splice(@$args, -$argsNum);
-        
-        # Передаем стандартную тройку, но вместо всех $args передаем только @pass_args
-        $res = $fun->($fun, \@pass_args, $flow);
-        
-        # Всё, что было в @pass_args, здесь забывается, так как переменная выходит из области видимости
-      }
-      else {
-        # Старый режим совместимости: передаем исходный $args целиком
-        $res = $fun->($fun, $args, $flow);
-      }
-
-      if( defined $res ) { # $fun вернула что-то определённое, НЕ undef
-        if( ref( $res ) eq 'ARRAY' ) { # $fun вернула ссылку на массив
-          unshift(@$flow, @$res) if scalar @$res;
-        }
-        else {
-          unshift @$flow, $res;
-        }
-      }
-
-      # Если в $args еще остались транзитные аргументы — возвращаем их в начало потока
-      if (scalar @$args) {
-        unshift @$flow, @$args;
-      }
-    }
-  }
-
-  return;
-}
-
-
-# функция chunk() принимает только ссылку на массив, перебирает его элементы
-# слева направо в поисках ссылки на функцию, всё, что не является ссылкой на функцию 
-# считается аргументом функции и попадает в массив аргументов.
-# возвращает массив из двух элементов ( fun, [args] )
-#
-sub chunk {
-  my $flow = shift;
-
-  return if ref( $flow ) ne 'ARRAY';
-
-  my ($fun, $args);
-
-  while(scalar @$flow) {
-    my $item = shift @$flow; 
-    if( ref $item ne 'CODE' ) {
-      push @$args, $item; # Аргументы собираются слева направо в прямом порядке
-    }
-    else {
-      $fun = $item;
-      last;
-    }
-  }
-
-  return $fun, $args;
-}
-
-
-# Preloaded methods go here.
-
-1;
-END
-# Below is stub documentation for your module. You'd better edit it!
-
-=head1 NAME
-MPGA - Make Perl Great Again - a module that makes it easy 
-to write programs in the PERL programming language.
-
-=head1 SYNOPSIS
-
-  use MPGA;
-
-  sub fun : MPGA::argsNum(2) {
-    my ($self, $args, $flow) = @_;
-    my ($a, $b) = @$args;
-    print "Got arguments: $a and $b\n";
-  }
-
-  flow( [ "transit_arg", 5, 6, \&fun ] );
-
-=head1 DESCRIPTION
-
-Something like "Flow driven development".
-
-Flow is a reference to an array of arguments and functions, which.
-are sequentially processed by the functions of this module.
-
-With this module you can program something like this:
-
-flow( [
-  $args, ... $args, \&fun1,
-  $another, ..., $args, \&fun2,
-  $more, ..., $args, \&fun3
 ] );
 
 =head1 SEE ALSO
